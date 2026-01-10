@@ -27,6 +27,7 @@ export function DocumentViewer({
           className="text-primary hover:text-primary"
           onClick={() => {
             if (fileInputRef.current) {
+              fileInputRef.current.value = ""; // Clear the input value to allow re-uploading
               fileInputRef.current.click();
             }
           }}
@@ -44,6 +45,15 @@ export function DocumentViewer({
           className="w-full h-full border-none"
         ></iframe>
       </div>
+
+      {/* Hidden file input for uploading new document */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="application/pdf"
+        className="hidden"
+        onChange={onUpload}
+      />
     </div>
   );
 }

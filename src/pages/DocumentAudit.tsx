@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { ComplianceFramework } from "@/components/audit/ComplianceFramework";
 import { DocumentViewer } from "@/components/audit/DocumentViewer";
 import { FindingsPanel } from "@/components/audit/FindingsPanel";
@@ -26,8 +26,8 @@ export default function DocumentAudit() {
     const file = event.target.files?.[0];
     if (file) {
       const fileURL = URL.createObjectURL(file);
-      setUploadedDocument(fileURL);
-      setFileName(file.name);
+      setUploadedDocument(fileURL); // Update the document URL
+      setFileName(file.name); // Update the file name
     }
   };
 
