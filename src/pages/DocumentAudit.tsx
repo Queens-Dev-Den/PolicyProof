@@ -1,13 +1,18 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { ComplianceFramework } from "@/components/audit/ComplianceFramework";
 import { DocumentViewer } from "@/components/audit/DocumentViewer";
 import { FindingsPanel } from "@/components/audit/FindingsPanel";
 import { Button } from "@/components/ui/button";
 import { Upload } from "lucide-react";
+import { useDocumentContext } from "@/context/DocumentContext";
 
 export default function DocumentAudit() {
-  const [uploadedDocument, setUploadedDocument] = useState<string | null>(null);
-  const [fileName, setFileName] = useState<string | null>(null);
+  const {
+    uploadedDocument,
+    fileName,
+    setUploadedDocument,
+    setFileName,
+  } = useDocumentContext();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleButtonClick = () => {
