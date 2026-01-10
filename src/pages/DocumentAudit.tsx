@@ -46,12 +46,8 @@ export default function DocumentAudit() {
             <DocumentViewer
               document={uploadedDocument}
               fileName={fileName || "Document"}
-              onUpload={() => {
-                if (fileInputRef.current) {
-                  fileInputRef.current.click();
-                }
-              }}
-              fileInputRef={fileInputRef} // Pass fileInputRef as a prop
+              onUpload={handleFileChange}
+              fileInputRef={fileInputRef}
             />
           ) : (
             <div className="text-center">
@@ -63,7 +59,7 @@ export default function DocumentAudit() {
                 type="file"
                 accept="application/pdf"
                 className="hidden"
-                onChange={handleFileChange} // Ensure the file change handler is used
+                onChange={handleFileChange}
               />
               <Button
                 variant="ghost"
