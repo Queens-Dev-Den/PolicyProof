@@ -36,13 +36,6 @@ According to **GDPR Article 5(1)(e)** - the "storage limitation" principle - per
   },
 ];
 
-const quickPrompts = [
-  "Data retention limits",
-  "Employment bias policies",
-  "ISO 27001 access control",
-  "Right to erasure",
-];
-
 export function PolicyChat() {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [input, setInput] = useState("");
@@ -78,29 +71,8 @@ This is a simulated response. In production, this would connect to your policy d
     }, 1500);
   };
 
-  const handleQuickPrompt = (prompt: string) => {
-    setInput(prompt);
-  };
-
   return (
     <div className="enterprise-card h-full flex flex-col">
-      {/* Chat Header */}
-      <div className="p-4 border-b border-border">
-        <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center w-8 h-8 rounded-md bg-primary">
-            <Bot className="w-5 h-5 text-primary-foreground" />
-          </div>
-          <div>
-            <h2 className="text-sm font-semibold text-foreground">
-              PolicyProof AI
-            </h2>
-            <p className="text-xs text-muted-foreground">
-              Compliance Intelligence Assistant
-            </p>
-          </div>
-        </div>
-      </div>
-
       {/* Messages */}
       <div className="flex-1 overflow-auto p-4 space-y-4 scrollbar-thin">
         {messages.map((message) => (
@@ -154,18 +126,6 @@ This is a simulated response. In production, this would connect to your policy d
                   {message.content}
                 </div>
               </div>
-              {message.references && message.references.length > 0 && (
-                <div className="flex flex-wrap gap-1">
-                  {message.references.map((ref) => (
-                    <span
-                      key={ref}
-                      className="text-xs px-2 py-0.5 rounded bg-primary/10 text-primary"
-                    >
-                      {ref}
-                    </span>
-                  ))}
-                </div>
-              )}
             </div>
           </div>
         ))}
@@ -185,21 +145,6 @@ This is a simulated response. In production, this would connect to your policy d
         )}
       </div>
 
-      {/* Quick Prompts */}
-      <div className="px-4 py-2 border-t border-border">
-        <div className="flex flex-wrap gap-2">
-          {quickPrompts.map((prompt) => (
-            <button
-              key={prompt}
-              onClick={() => handleQuickPrompt(prompt)}
-              className="text-xs px-3 py-1.5 rounded-full border border-border text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-            >
-              {prompt}
-            </button>
-          ))}
-        </div>
-      </div>
-
       {/* Input */}
       <div className="p-4 border-t border-border">
         <div className="flex gap-2">
@@ -207,7 +152,7 @@ This is a simulated response. In production, this would connect to your policy d
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSend()}
-            placeholder="Ask about GDPR, ISO, SOC 2, internal policies…"
+            placeholder="Ask about your organization's policies…"
             className="flex-1"
           />
           <Button onClick={handleSend} disabled={!input.trim() || isTyping}>
