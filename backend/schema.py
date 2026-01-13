@@ -36,7 +36,18 @@ REPORT_TOOL = {
                             "description": "Data used for the 'View in document' link to highlight the correct area.",
                             "properties": {
                                 "page_number": {"type": "integer"},
-                                "exact_quote": {"type": "string", "description": "The text to highlight in the PDF."}
+                                "exact_quote": {"type": "string", "description": "The text to highlight in the PDF."},
+                                "bounding_box": {
+                                    "type": "object",
+                                    "description": "Coordinates for highlighting the text on the PDF page.",
+                                    "properties": {
+                                        "x": {"type": "number", "description": "X coordinate from left (pixels)"},
+                                        "y": {"type": "number", "description": "Y coordinate from top (pixels)"},
+                                        "width": {"type": "number", "description": "Width of the box (pixels)"},
+                                        "height": {"type": "number", "description": "Height of the box (pixels)"}
+                                    },
+                                    "required": ["x", "y", "width", "height"]
+                                }
                             },
                             "required": ["page_number", "exact_quote"]
                         }

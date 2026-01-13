@@ -12,6 +12,12 @@ interface Finding {
   location_metadata: {
     page_number: number;
     exact_quote: string;
+    bounding_box?: {
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+    };
   };
 }
 
@@ -21,9 +27,15 @@ export function FindingsPanel() {
   const violations = findings.filter((f) => f.type === "VIOLATION");
   const compliant = findings.filter((f) => f.type === "COMPLIANCE");
 
-  const handleViewInDocument = (pageNumber: number, quote: string) => {
-    // In a real implementation, this would scroll to the specific page and highlight the quote
-    console.log("Scrolling to page:", pageNumber, "Quote:", quote);
+  const handleViewInDocument = (finding: Finding) => {
+    // Emit custom event to navigate to the specific page and highlight the finding
+    const event = new CustomEvent("scrollToFinding", {
+      detail: {
+        pageNumber: finding.location_metadata.page_number,
+        finding: finding,
+      },
+    });
+    window.dispatchEvent(event);
   };
 
   return (
@@ -96,12 +108,7 @@ export function FindingsPanel() {
                     variant="ghost"
                     size="sm"
                     className="mt-3 text-primary hover:text-primary p-0 h-auto"
-                    onClick={() => 
-                      handleViewInDocument(
-                        finding.location_metadata.page_number, 
-                        finding.location_metadata.exact_quote
-                      )
-                    }
+                    onClick={() => handleViewInDocument(finding)}
                   >
                     <Eye className="w-3 h-3 mr-1" />
                     View in document (Page {finding.location_metadata.page_number})
