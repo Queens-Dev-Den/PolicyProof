@@ -103,10 +103,11 @@ export function FindingsPanel() {
                   >
                     {finding.title}
                   </h3>
-                  <p className="text-xs text-muted-foreground mb-2">
-                    {finding.section}
-                    {finding.policy_reference && ` · ${finding.policy_reference}`}
-                  </p>
+                  {finding.policy_reference && (
+                    <p className="text-xs text-muted-foreground mb-2">
+                      {finding.policy_reference}
+                    </p>
+                  )}
                   <p className="text-sm text-foreground leading-relaxed">
                     {finding.message}
                   </p>
