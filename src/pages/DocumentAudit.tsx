@@ -1,5 +1,4 @@
 import { useRef, useState } from "react";
-import { ComplianceFramework } from "@/components/audit/ComplianceFramework";
 import { DocumentViewer } from "@/components/audit/DocumentViewer";
 import { FindingsPanel } from "@/components/audit/FindingsPanel";
 import { Button } from "@/components/ui/button";
@@ -69,6 +68,7 @@ export default function DocumentAudit() {
       const fileURL = URL.createObjectURL(file);
       setUploadedDocument(fileURL); // Update the document URL
       setFileName(file.name); // Update the file name
+      setFindings([]); // Clear previous findings
       
       // Analyze the document
       await analyzeDocument(file);
@@ -77,15 +77,33 @@ export default function DocumentAudit() {
 
   return (
     <div className="h-screen flex flex-col">
-      {/* Main Content - 3 Column Grid */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-[240px_1fr_320px] gap-0 overflow-hidden">
-        {/* Column 1: Compliance Framework (20%) */}
-        <div className="border-r border-border overflow-hidden hidden lg:block">
-          <ComplianceFramework />
-        </div>
-
-        {/* Column 2: Document Viewer or Upload Prompt (50%) */}
-        <div className="overflow-hidden flex items-center justify-center">
+      {/* Main Content - 2 Column Grid */}
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-0 overflow-hidden">
+        {/* Column 1: Document Viewer or Upload Prompt */}
+        <div className="overflow-hidden flex items-center justify-center relative">
+          {isAnalyzing && uploadedDocument && (
+            <div className="absolute inset-0 bg-background/80 backdrop-blur-sm z-10 flex items-center justify-center">
+              <div className="flex flex-col items-center gap-6 p-8">
+                <div className="relative">
+                  <Loader2 className="w-16 h-16 animate-spin text-primary" />
+                  <div className="absolute inset-0 w-16 h-16 animate-ping text-primary/30">
+                    <Loader2 className="w-16 h-16" />
+                  </div>
+                </div>
+                <div className="text-center space-y-2">
+                  <h3 className="text-xl font-semibold text-foreground">Analyzing Document</h3>
+                  <p className="text-sm text-muted-foreground">
+                    AI is reviewing your document for compliance violations...
+                  </p>
+                  <div className="flex items-center justify-center gap-1 pt-2">
+                    <div className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                    <div className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                    <div className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
           {uploadedDocument ? (
             <DocumentViewer
               document={uploadedDocument}
@@ -99,9 +117,21 @@ export default function DocumentAudit() {
                 Please upload a document to begin the audit.
               </p>
               {isAnalyzing && (
-                <div className="flex items-center justify-center gap-2 mb-4">
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <span className="text-sm text-muted-foreground">Analyzing document...</span>
+                <div className="flex flex-col items-center gap-4 mb-4">
+                  <div className="relative">
+                    <Loader2 className="w-12 h-12 animate-spin text-primary" />
+                    <div className="absolute inset-0 w-12 h-12 animate-ping text-primary/30">
+                      <Loader2 className="w-12 h-12" />
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm font-medium text-foreground mb-1">Analyzing document...</p>
+                    <div className="flex items-center justify-center gap-1">
+                      <div className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                      <div className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                      <div className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                    </div>
+                  </div>
                 </div>
               )}
               <input
@@ -126,7 +156,7 @@ export default function DocumentAudit() {
           )}
         </div>
 
-        {/* Column 3: Findings Panel (30%) */}
+        {/* Column 2: Findings Panel */}
         <div className="border-l border-border overflow-hidden hidden lg:block">
           <FindingsPanel />
         </div>

@@ -6,7 +6,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import DocumentAudit from "./pages/DocumentAudit";
 import LiveAssistant from "./pages/LiveAssistant";
-import GovernanceSettings from "./pages/GovernanceSettings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,14 +30,6 @@ const App = () => (
             element={
               <DashboardLayout>
                 <LiveAssistant />
-              </DashboardLayout>
-            }
-          />
-          <Route
-            path="/settings"
-            element={
-              <DashboardLayout>
-                <GovernanceSettings />
               </DashboardLayout>
             }
           />

@@ -18,11 +18,13 @@ interface DocumentContextType {
   findings: Finding[];
   isAnalyzing: boolean;
   selectedFinding: Finding | null;
+  selectedFrameworks: string[];
   setUploadedDocument: (document: string | null) => void;
   setFileName: (name: string | null) => void;
   setFindings: (findings: Finding[]) => void;
   setIsAnalyzing: (analyzing: boolean) => void;
   setSelectedFinding: (finding: Finding | null) => void;
+  setSelectedFrameworks: (frameworks: string[]) => void;
 }
 
 const DocumentContext = createContext<DocumentContextType | undefined>(undefined);
@@ -33,6 +35,7 @@ export const DocumentProvider = ({ children }: { children: ReactNode }) => {
   const [findings, setFindings] = useState<Finding[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
   const [selectedFinding, setSelectedFinding] = useState<Finding | null>(null);
+  const [selectedFrameworks, setSelectedFrameworks] = useState<string[]>(["GDPR"]);
 
   return (
     <DocumentContext.Provider
@@ -42,11 +45,13 @@ export const DocumentProvider = ({ children }: { children: ReactNode }) => {
         findings,
         isAnalyzing,
         selectedFinding,
+        selectedFrameworks,
         setUploadedDocument, 
         setFileName,
         setFindings,
         setIsAnalyzing,
-        setSelectedFinding
+        setSelectedFinding,
+        setSelectedFrameworks
       }}
     >
       {children}
