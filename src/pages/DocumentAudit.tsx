@@ -80,7 +80,30 @@ export default function DocumentAudit() {
       {/* Main Content - 2 Column Grid */}
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-0 overflow-hidden">
         {/* Column 1: Document Viewer or Upload Prompt */}
-        <div className="overflow-hidden flex items-center justify-center">
+        <div className="overflow-hidden flex items-center justify-center relative">
+          {isAnalyzing && uploadedDocument && (
+            <div className="absolute inset-0 bg-background/80 backdrop-blur-sm z-10 flex items-center justify-center">
+              <div className="flex flex-col items-center gap-6 p-8">
+                <div className="relative">
+                  <Loader2 className="w-16 h-16 animate-spin text-primary" />
+                  <div className="absolute inset-0 w-16 h-16 animate-ping text-primary/30">
+                    <Loader2 className="w-16 h-16" />
+                  </div>
+                </div>
+                <div className="text-center space-y-2">
+                  <h3 className="text-xl font-semibold text-foreground">Analyzing Document</h3>
+                  <p className="text-sm text-muted-foreground">
+                    AI is reviewing your document for compliance violations...
+                  </p>
+                  <div className="flex items-center justify-center gap-1 pt-2">
+                    <div className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                    <div className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                    <div className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
           {uploadedDocument ? (
             <DocumentViewer
               document={uploadedDocument}
@@ -94,9 +117,21 @@ export default function DocumentAudit() {
                 Please upload a document to begin the audit.
               </p>
               {isAnalyzing && (
-                <div className="flex items-center justify-center gap-2 mb-4">
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <span className="text-sm text-muted-foreground">Analyzing document...</span>
+                <div className="flex flex-col items-center gap-4 mb-4">
+                  <div className="relative">
+                    <Loader2 className="w-12 h-12 animate-spin text-primary" />
+                    <div className="absolute inset-0 w-12 h-12 animate-ping text-primary/30">
+                      <Loader2 className="w-12 h-12" />
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm font-medium text-foreground mb-1">Analyzing document...</p>
+                    <div className="flex items-center justify-center gap-1">
+                      <div className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                      <div className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                      <div className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                    </div>
+                  </div>
                 </div>
               )}
               <input
