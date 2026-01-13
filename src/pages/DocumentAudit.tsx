@@ -1,5 +1,4 @@
 import { useRef, useState } from "react";
-import { ComplianceFramework } from "@/components/audit/ComplianceFramework";
 import { DocumentViewer } from "@/components/audit/DocumentViewer";
 import { FindingsPanel } from "@/components/audit/FindingsPanel";
 import { Button } from "@/components/ui/button";
@@ -69,6 +68,7 @@ export default function DocumentAudit() {
       const fileURL = URL.createObjectURL(file);
       setUploadedDocument(fileURL); // Update the document URL
       setFileName(file.name); // Update the file name
+      setFindings([]); // Clear previous findings
       
       // Analyze the document
       await analyzeDocument(file);
@@ -77,14 +77,9 @@ export default function DocumentAudit() {
 
   return (
     <div className="h-screen flex flex-col">
-      {/* Main Content - 3 Column Grid */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-[240px_1fr_320px] gap-0 overflow-hidden">
-        {/* Column 1: Compliance Framework (20%) */}
-        <div className="border-r border-border overflow-hidden hidden lg:block">
-          <ComplianceFramework />
-        </div>
-
-        {/* Column 2: Document Viewer or Upload Prompt (50%) */}
+      {/* Main Content - 2 Column Grid */}
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-0 overflow-hidden">
+        {/* Column 1: Document Viewer or Upload Prompt */}
         <div className="overflow-hidden flex items-center justify-center">
           {uploadedDocument ? (
             <DocumentViewer
@@ -126,7 +121,7 @@ export default function DocumentAudit() {
           )}
         </div>
 
-        {/* Column 3: Findings Panel (30%) */}
+        {/* Column 2: Findings Panel */}
         <div className="border-l border-border overflow-hidden hidden lg:block">
           <FindingsPanel />
         </div>
