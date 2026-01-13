@@ -17,10 +17,12 @@ interface DocumentContextType {
   fileName: string | null;
   findings: Finding[];
   isAnalyzing: boolean;
+  selectedFinding: Finding | null;
   setUploadedDocument: (document: string | null) => void;
   setFileName: (name: string | null) => void;
   setFindings: (findings: Finding[]) => void;
   setIsAnalyzing: (analyzing: boolean) => void;
+  setSelectedFinding: (finding: Finding | null) => void;
 }
 
 const DocumentContext = createContext<DocumentContextType | undefined>(undefined);
@@ -29,7 +31,8 @@ export const DocumentProvider = ({ children }: { children: ReactNode }) => {
   const [uploadedDocument, setUploadedDocument] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
   const [findings, setFindings] = useState<Finding[]>([]);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
+  const [selectedFinding, setSelectedFinding] = useState<Finding | null>(null);
 
   return (
     <DocumentContext.Provider
@@ -38,10 +41,12 @@ export const DocumentProvider = ({ children }: { children: ReactNode }) => {
         fileName, 
         findings,
         isAnalyzing,
+        selectedFinding,
         setUploadedDocument, 
         setFileName,
         setFindings,
-        setIsAnalyzing
+        setIsAnalyzing,
+        setSelectedFinding
       }}
     >
       {children}
