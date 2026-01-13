@@ -56,16 +56,22 @@ export function HighlightLayer({
 
     // Mock bounding box calculation
     // Divide page into vertical sections and place findings
-    const margin = 50; // pixels from edges
-    const findingHeight = 40;
-    const spacing = 20;
-    const y = margin + (index * (findingHeight + spacing));
+    // Using more realistic text dimensions
+    const margin = 72; // 1 inch margin (typical PDF margin)
+    const lineHeight = 16; // Typical line height in pixels
+    const spacing = 24; // Space between findings
+    const y = margin + (index * (lineHeight + spacing));
+    
+    // Estimate width based on quote length (rough approximation)
+    const charWidth = 7; // Average character width
+    const quoteLength = finding.location_metadata.exact_quote.length;
+    const estimatedWidth = Math.min(quoteLength * charWidth, pageWidth - 2 * margin);
     
     return {
       x: margin,
       y: y,
-      width: pageWidth - 2 * margin,
-      height: findingHeight,
+      width: estimatedWidth,
+      height: lineHeight,
     };
   };
 
@@ -80,41 +86,32 @@ export function HighlightLayer({
       {pageFindings.map((finding, index) => {
         const box = calculateBoundingBox(finding, index);
         const isSelected = selectedFinding === finding;
+        const underlineThickness = isSelected ? 3 : 2;
         
         return (
           <div
             key={index}
             className={cn(
-              "absolute pointer-events-auto cursor-pointer transition-all duration-300",
-              isSelected && "animate-pulse"
+              "absolute pointer-events-auto cursor-pointer transition-all duration-200"
             )}
             style={{
               left: `${box.x}px`,
-              top: `${box.y}px`,
+              top: `${box.y + box.height}px`, // Position directly at bottom of text
               width: `${box.width}px`,
-              height: `${box.height}px`,
+              height: `${underlineThickness}px`,
+              backgroundColor: finding.type === "VIOLATION" 
+                ? "rgb(239 68 68)" // red-500
+                : "rgb(34 197 94)", // green-500
+              opacity: isSelected ? 1 : 0.8,
+              boxShadow: isSelected 
+                ? finding.type === "VIOLATION"
+                  ? "0 0 8px rgba(239, 68, 68, 0.6)"
+                  : "0 0 8px rgba(34, 197, 94, 0.6)"
+                : "none",
             }}
             onClick={() => onFindingClick(finding)}
             title={finding.title}
-          >
-            {/* Semi-transparent background overlay */}
-            <div
-              className={cn(
-                "absolute inset-0 rounded transition-opacity",
-                finding.type === "VIOLATION"
-                  ? "bg-destructive/20 hover:bg-destructive/30"
-                  : "bg-success/20 hover:bg-success/30"
-              )}
-            />
-            
-            {/* Colored underline */}
-            <div
-              className={cn(
-                "absolute bottom-0 left-0 right-0 h-1 rounded-full",
-                finding.type === "VIOLATION" ? "bg-destructive" : "bg-success"
-              )}
-            />
-          </div>
+          />
         );
       })}
     </div>

@@ -33,21 +33,10 @@ REPORT_TOOL = {
                         },
                         "location_metadata": {
                             "type": "object",
-                            "description": "Data used for the 'View in document' link to highlight the correct area.",
+                            "description": "Metadata for referencing the finding's location in the document.",
                             "properties": {
-                                "page_number": {"type": "integer"},
-                                "exact_quote": {"type": "string", "description": "The text to highlight in the PDF."},
-                                "bounding_box": {
-                                    "type": "object",
-                                    "description": "Coordinates for highlighting the text on the PDF page.",
-                                    "properties": {
-                                        "x": {"type": "number", "description": "X coordinate from left (pixels)"},
-                                        "y": {"type": "number", "description": "Y coordinate from top (pixels)"},
-                                        "width": {"type": "number", "description": "Width of the box (pixels)"},
-                                        "height": {"type": "number", "description": "Height of the box (pixels)"}
-                                    },
-                                    "required": ["x", "y", "width", "height"]
-                                }
+                                "page_number": {"type": "integer", "description": "The page number where this finding appears."},
+                                "exact_quote": {"type": "string", "description": "The exact text excerpt from the document."}
                             },
                             "required": ["page_number", "exact_quote"]
                         }

@@ -1,12 +1,10 @@
 import { Upload, FileText, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
-import { HighlightLayer } from "./HighlightLayer";
-import { useDocumentContext } from "@/context/DocumentContext";
 
 // Configure PDF.js worker
 pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
@@ -25,9 +23,7 @@ export function DocumentViewer({
   const [numPages, setNumPages] = useState<number>(0);
   const [pageInput, setPageInput] = useState<string>("1");
   const [pageNumber, setPageNumber] = useState<number>(1);
-  const [pageWidth, setPageWidth] = useState<number>(0);
-  const [pageHeight, setPageHeight] = useState<number>(0);
-  const { findings, selectedFinding, setSelectedFinding } = useDocumentContext();
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
     setNumPages(numPages);
@@ -35,30 +31,28 @@ export function DocumentViewer({
     setPageNumber(1);
   }
 
-  function onPageLoadSuccess(page: any) {
-    const viewport = page.getViewport({ scale: 1 });
-    setPageWidth(viewport.width);
-    setPageHeight(viewport.height);
-  }
-
   // Listen for scrollToFinding event from FindingsPanel
   useEffect(() => {
     const handleScrollToFinding = (event: CustomEvent) => {
-      const { pageNumber: targetPage, finding } = event.detail;
+      const { pageNumber: targetPage } = event.detail;
       setPageNumber(targetPage);
-      setSelectedFinding(finding);
-      
-      // Clear selection after 3 seconds
-      setTimeout(() => {
-        setSelectedFinding(null);
-      }, 3000);
+      setPageInput(targetPage.toString());
     };
 
     window.addEventListener("scrollToFinding" as any, handleScrollToFinding);
     return () => {
       window.removeEventListener("scrollToFinding" as any, handleScrollToFinding);
     };
-  }, [setSelectedFinding]);
+  }, []);
+
+  // Scroll to top when page changes
+  useEffect(() => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTo({ top: 0, behavior: 'instant' });
+    }
+  }, [pageNumber]);
+
+
 
   const goToPrevPage = () => {
     const newPage = Math.max(pageNumber - 1, 1);
@@ -96,13 +90,6 @@ export function DocumentViewer({
       // Reset to current page if invalid
       setPageInput(pageNumber.toString());
     }
-  };
-
-  const handleFindingClick = (finding: any) => {
-    setSelectedFinding(finding);
-    setTimeout(() => {
-      setSelectedFinding(null);
-    }, 3000);
   };
 
   return (
@@ -164,7 +151,7 @@ export function DocumentViewer({
         </div>
       )}
 
-      <div className="flex-1 overflow-auto bg-muted/30 flex items-start justify-center p-4">
+      <div ref={scrollContainerRef} className="flex-1 overflow-auto bg-muted/30 flex items-start justify-center p-4">
         <div className="relative">
           <Document
             file={document}
@@ -180,26 +167,12 @@ export function DocumentViewer({
               </div>
             }
           >
-            <div className="relative shadow-lg">
-              <Page
-                pageNumber={pageNumber}
-                onLoadSuccess={onPageLoadSuccess}
-                renderTextLayer={true}
-                renderAnnotationLayer={true}
-                className="max-w-full"
-              />
-              {/* Overlay highlight layer on top of the page */}
-              {pageWidth > 0 && pageHeight > 0 && (
-                <HighlightLayer
-                  findings={findings}
-                  pageNumber={pageNumber}
-                  pageWidth={pageWidth}
-                  pageHeight={pageHeight}
-                  onFindingClick={handleFindingClick}
-                  selectedFinding={selectedFinding}
-                />
-              )}
-            </div>
+            <Page
+              pageNumber={pageNumber}
+              renderTextLayer={true}
+              renderAnnotationLayer={true}
+              className="max-w-full shadow-lg"
+            />
           </Document>
         </div>
       </div>

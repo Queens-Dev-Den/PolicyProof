@@ -12,12 +12,6 @@ interface Finding {
   location_metadata: {
     page_number: number;
     exact_quote: string;
-    bounding_box?: {
-      x: number;
-      y: number;
-      width: number;
-      height: number;
-    };
   };
 }
 
