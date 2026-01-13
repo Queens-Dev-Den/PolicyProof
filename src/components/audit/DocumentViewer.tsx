@@ -1,10 +1,11 @@
-import { Upload, FileText, ChevronLeft, ChevronRight } from "lucide-react";
+import { Upload, FileText, ChevronLeft, ChevronRight, X, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect, useRef } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
+import { useDocumentContext } from "@/context/DocumentContext";
 
 // Configure PDF.js worker
 pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
@@ -23,6 +24,14 @@ export function DocumentViewer({
   const [numPages, setNumPages] = useState<number>(0);
   const [pageInput, setPageInput] = useState<string>("1");
   const [pageNumber, setPageNumber] = useState<number>(1);
+  const { findings } = useDocumentContext();
+
+  // Get findings for current page
+  const currentPageFindings = findings.filter(
+    (f) => f.location_metadata.page_number === pageNumber
+  );
+  const pageViolations = currentPageFindings.filter((f) => f.type === "VIOLATION").length;
+  const pageCompliances = currentPageFindings.filter((f) => f.type === "COMPLIANCE").length;
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
@@ -95,7 +104,7 @@ export function DocumentViewer({
   return (
     <div className="enterprise-card h-full w-full flex flex-col">
       <div className="p-4 border-b border-border flex items-center justify-between">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <FileText className="w-4 h-4 text-muted-foreground" />
           <h2 className="text-sm font-semibold text-foreground">
             {fileName}
@@ -119,35 +128,57 @@ export function DocumentViewer({
 
       {/* Page Navigation Controls */}
       {numPages > 0 && (
-        <div className="p-2 border-b border-border flex items-center justify-center gap-4">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={goToPrevPage}
-            disabled={pageNumber <= 1}
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </Button>
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">Page</span>
-            <Input
-              type="text"
-              value={pageInput}
-              onChange={handlePageInputChange}
-              onKeyDown={handlePageInputSubmit}
-              onBlur={handlePageInputBlur}
-              className="w-12 h-7 text-center text-sm px-1"
-            />
-            <span className="text-sm text-muted-foreground">of {numPages}</span>
-          </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={goToNextPage}
-            disabled={pageNumber >= numPages}
-          >
-            <ChevronRight className="w-4 h-4" />
-          </Button>
+        <div className="p-2 border-b border-border flex items-center justify-between gap-4">
+            {/* Current Page Findings Indicator */}
+            <div className="flex items-center gap-2 ml-2">
+              {pageViolations > 0 && (
+                <div className="flex items-center gap-1 px-2 py-1 bg-destructive/10 border border-destructive/30 rounded-md">
+                  <X className="w-3 h-3 text-destructive" />
+                  <span className="text-xs font-semibold text-destructive">
+                    {pageViolations} violation{pageViolations !== 1 ? 's' : ''}
+                  </span>
+                </div>
+              )}
+              {pageCompliances > 0 && (
+                <div className="flex items-center gap-1 px-2 py-1 bg-success/10 border border-success/30 rounded-md">
+                  <Check className="w-3 h-3 text-success" />
+                  <span className="text-xs font-semibold text-success">
+                    {pageCompliances} compliance{pageCompliances !== 1 ? 's' : ''}
+                  </span>
+                </div>
+              )}
+            </div>
+            
+            <div className="flex items-center gap-4">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={goToPrevPage}
+                disabled={pageNumber <= 1}
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </Button>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">Page</span>
+                <Input
+                  type="text"
+                  value={pageInput}
+                  onChange={handlePageInputChange}
+                  onKeyDown={handlePageInputSubmit}
+                  onBlur={handlePageInputBlur}
+                  className="w-12 h-7 text-center text-sm px-1"
+                />
+                <span className="text-sm text-muted-foreground">of {numPages}</span>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={goToNextPage}
+                disabled={pageNumber >= numPages}
+              >
+                <ChevronRight className="w-4 h-4" />
+              </Button>
+            </div>
         </div>
       )}
 

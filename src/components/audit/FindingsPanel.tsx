@@ -1,4 +1,4 @@
-import { AlertTriangle, CheckCircle, Eye } from "lucide-react";
+import { Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useDocumentContext } from "@/context/DocumentContext";
@@ -66,20 +66,6 @@ export function FindingsPanel() {
               )}
             >
               <div className="flex items-start gap-3">
-                <div
-                  className={cn(
-                    "flex items-center justify-center w-8 h-8 rounded-md flex-shrink-0",
-                    finding.type === "VIOLATION"
-                      ? "bg-destructive/10"
-                      : "bg-success/10"
-                  )}
-                >
-                  {finding.type === "VIOLATION" ? (
-                    <AlertTriangle className="w-4 h-4 text-destructive" />
-                  ) : (
-                    <CheckCircle className="w-4 h-4 text-success" />
-                  )}
-                </div>
                 <div className="flex-1 min-w-0">
                   <h3
                     className={cn(
