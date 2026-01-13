@@ -24,7 +24,9 @@ export function DocumentViewer({
   const [numPages, setNumPages] = useState<number>(0);
   const [pageInput, setPageInput] = useState<string>("1");
   const [pageNumber, setPageNumber] = useState<number>(1);
+  const [containerWidth, setContainerWidth] = useState<number>(0);
   const { findings } = useDocumentContext();
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Get findings for current page
   const currentPageFindings = findings.filter(
@@ -33,6 +35,29 @@ export function DocumentViewer({
   const pageViolations = currentPageFindings.filter((f) => f.type === "VIOLATION").length;
   const pageCompliances = currentPageFindings.filter((f) => f.type === "COMPLIANCE").length;
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // Measure container width
+  useEffect(() => {
+    const updateWidth = () => {
+      if (containerRef.current) {
+        // Subtract padding (16px on each side = 32px total)
+        const newWidth = containerRef.current.offsetWidth - 32;
+        setContainerWidth(newWidth);
+      }
+    };
+
+    updateWidth();
+    
+    const resizeObserver = new ResizeObserver(updateWidth);
+    
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current);
+    }
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, []);
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
     setNumPages(numPages);
@@ -183,7 +208,7 @@ export function DocumentViewer({
       )}
 
       <div ref={scrollContainerRef} className="flex-1 overflow-auto bg-muted/30 flex items-start justify-center p-4">
-        <div className="relative">
+        <div ref={containerRef} className="w-full flex justify-center">
           <Document
             file={document}
             onLoadSuccess={onDocumentLoadSuccess}
@@ -202,7 +227,8 @@ export function DocumentViewer({
               pageNumber={pageNumber}
               renderTextLayer={true}
               renderAnnotationLayer={true}
-              className="max-w-full shadow-lg"
+              className="shadow-lg"
+              width={containerWidth > 0 ? containerWidth : undefined}
             />
           </Document>
         </div>

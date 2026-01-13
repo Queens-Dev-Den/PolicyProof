@@ -80,7 +80,7 @@ export function AppSidebar() {
   return (
     <aside
       className={cn(
-        "flex flex-col border-r border-border bg-sidebar transition-all duration-300 ease-in-out h-screen sticky top-0",
+        "flex flex-col border-r border-border bg-sidebar transition-all duration-300 ease-in-out h-screen sticky top-0 z-50",
         collapsed ? "w-16" : "w-64"
       )}
     >
@@ -110,8 +110,9 @@ export function AppSidebar() {
               key={item.href}
               to={item.href}
               className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-all duration-150",
+                "flex items-center justify-center gap-3 rounded-md text-sm font-medium transition-all duration-150",
                 "hover:bg-sidebar-accent",
+                collapsed ? "px-0 py-2.5" : "px-3 py-2.5",
                 isActive
                   ? "bg-primary/10 text-primary border-l-2 border-primary"
                   : "text-sidebar-foreground"
@@ -128,7 +129,7 @@ export function AppSidebar() {
             return (
               <Tooltip key={item.href} delayDuration={0}>
                 <TooltipTrigger asChild>{NavButton}</TooltipTrigger>
-                <TooltipContent side="right" className="font-medium">
+                <TooltipContent side="right" align="center" className="font-medium">
                   {item.title}
                 </TooltipContent>
               </Tooltip>
