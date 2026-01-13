@@ -110,9 +110,9 @@ export function AppSidebar() {
               key={item.href}
               to={item.href}
               className={cn(
-                "flex items-center justify-center gap-3 rounded-md text-sm font-medium transition-all duration-150",
+                "flex items-center gap-3 rounded-md text-sm font-medium transition-all duration-150",
                 "hover:bg-sidebar-accent",
-                collapsed ? "px-0 py-2.5" : "px-3 py-2.5",
+                "px-3 py-2.5",
                 isActive
                   ? "bg-primary/10 text-primary border-l-2 border-primary"
                   : "text-sidebar-foreground"
@@ -145,12 +145,12 @@ export function AppSidebar() {
 
       {/* Compliance Frameworks Section */}
       {!collapsed && (
-        <div className="flex-1 flex flex-col px-3 pb-4 overflow-hidden">
-          <div className="mb-3">
-            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+        <div className="flex-1 flex flex-col px-3 pb-4 overflow-hidden min-w-0">
+          <div className="mb-3 min-w-[208px]">
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 whitespace-nowrap">
               Policy Frameworks
             </h3>
-            <p className="text-xs text-muted-foreground mb-2">
+            <p className="text-xs text-muted-foreground mb-2 whitespace-nowrap">
               At least 1 framework must be selected
             </p>
             <div className="flex gap-2">
