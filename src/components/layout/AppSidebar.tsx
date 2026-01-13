@@ -27,7 +27,6 @@ interface NavItem {
 const navItems: NavItem[] = [
   { title: "Document Audit", icon: FileSearch, href: "/" },
   { title: "Live Assistant", icon: MessageSquare, href: "/assistant" },
-  { title: "Governance Settings", icon: Settings, href: "/settings" },
 ];
 
 export function AppSidebar() {
