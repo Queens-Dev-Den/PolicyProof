@@ -33,10 +33,10 @@ REPORT_TOOL = {
                         },
                         "location_metadata": {
                             "type": "object",
-                            "description": "Data used for the 'View in document' link to highlight the correct area.",
+                            "description": "Metadata for referencing the finding's location in the document.",
                             "properties": {
-                                "page_number": {"type": "integer"},
-                                "exact_quote": {"type": "string", "description": "The text to highlight in the PDF."}
+                                "page_number": {"type": "integer", "description": "The page number where this finding appears."},
+                                "exact_quote": {"type": "string", "description": "The exact text excerpt from the document."}
                             },
                             "required": ["page_number", "exact_quote"]
                         }
