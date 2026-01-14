@@ -1,53 +1,35 @@
-import { AlertTriangle, CheckCircle, Eye } from "lucide-react";
+import { Eye, FileSearch, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useDocumentContext } from "@/context/DocumentContext";
 
 interface Finding {
-  id: string;
-  type: "violation" | "compliant";
+  type: "VIOLATION" | "COMPLIANCE";
   title: string;
-  description: string;
   section: string;
-  lineNumber?: number;
+  message: string;
+  policy_reference?: string;
+  location_metadata: {
+    page_number: number;
+    exact_quote: string;
+  };
 }
 
-const findings: Finding[] = [
-  {
-    id: "1",
-    type: "violation",
-    title: "Data Retention Error",
-    description:
-      "Clause permits indefinite storage of customer data, violating GDPR Article 5(1)(e) which requires storage limitation.",
-    section: "Section 2",
-    lineNumber: 12,
-  },
-  {
-    id: "2",
-    type: "compliant",
-    title: "Security Measures Compliant",
-    description:
-      "Encryption requirements meet ISO 27001 standards for data protection at rest and in transit.",
-    section: "Section 3",
-    lineNumber: 24,
-  },
-  {
-    id: "3",
-    type: "violation",
-    title: "Missing DPO Reference",
-    description:
-      "No reference to Data Protection Officer contact information as required by GDPR Article 37.",
-    section: "Section 1",
-    lineNumber: 5,
-  },
-];
-
 export function FindingsPanel() {
-  const violations = findings.filter((f) => f.type === "violation");
-  const compliant = findings.filter((f) => f.type === "compliant");
+  const { findings, isAnalyzing } = useDocumentContext();
+  
+  const violations = findings.filter((f) => f.type === "VIOLATION");
+  const compliant = findings.filter((f) => f.type === "COMPLIANCE");
 
-  const handleViewInDocument = (lineNumber?: number) => {
-    // In a real implementation, this would scroll to the specific line in the document
-    console.log("Scrolling to line:", lineNumber);
+  const handleViewInDocument = (finding: Finding) => {
+    // Emit custom event to navigate to the specific page and highlight the finding
+    const event = new CustomEvent("scrollToFinding", {
+      detail: {
+        pageNumber: finding.location_metadata.page_number,
+        finding: finding,
+      },
+    });
+    window.dispatchEvent(event);
   };
 
   return (
@@ -62,61 +44,87 @@ export function FindingsPanel() {
       </div>
 
       <div className="flex-1 overflow-auto p-4 space-y-3 scrollbar-thin">
-        {findings.map((finding) => (
-          <div
-            key={finding.id}
-            className={cn(
-              "p-4 rounded-md border transition-all hover:shadow-sm",
-              finding.type === "violation"
-                ? "bg-violation-light border-destructive/30"
-                : "bg-compliant-light border-success/30"
-            )}
-          >
-            <div className="flex items-start gap-3">
-              <div
-                className={cn(
-                  "flex items-center justify-center w-8 h-8 rounded-md flex-shrink-0",
-                  finding.type === "violation"
-                    ? "bg-destructive/10"
-                    : "bg-success/10"
-                )}
-              >
-                {finding.type === "violation" ? (
-                  <AlertTriangle className="w-4 h-4 text-destructive" />
-                ) : (
-                  <CheckCircle className="w-4 h-4 text-success" />
-                )}
-              </div>
-              <div className="flex-1 min-w-0">
-                <h3
-                  className={cn(
-                    "text-sm font-medium mb-1",
-                    finding.type === "violation"
-                      ? "text-destructive"
-                      : "text-success"
-                  )}
-                >
-                  {finding.title}
-                </h3>
-                <p className="text-xs text-muted-foreground mb-2">
-                  {finding.section}
-                </p>
-                <p className="text-sm text-foreground leading-relaxed">
-                  {finding.description}
-                </p>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="mt-3 text-primary hover:text-primary p-0 h-auto"
-                  onClick={() => handleViewInDocument(finding.lineNumber)}
-                >
-                  <Eye className="w-3 h-3 mr-1" />
-                  View in document
-                </Button>
+        {isAnalyzing ? (
+          <div className="flex flex-col items-center justify-center py-12 space-y-6">
+            <div className="relative">
+              <FileSearch className="w-16 h-16 text-primary/20" />
+              <Sparkles className="w-8 h-8 text-primary absolute top-0 right-0 animate-pulse" />
+            </div>
+            <div className="text-center space-y-3">
+              <h3 className="text-sm font-semibold text-foreground">Scanning Document</h3>
+              <p className="text-xs text-muted-foreground max-w-[200px]">
+                AI is analyzing compliance violations and compliant sections
+              </p>
+              <div className="space-y-2 pt-2">
+                <div className="flex items-center gap-2">
+                  <div className="h-1 flex-1 bg-muted rounded-full overflow-hidden">
+                    <div className="h-full bg-primary/60 animate-pulse rounded-full" style={{ width: '60%' }}></div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="h-1 flex-1 bg-muted rounded-full overflow-hidden">
+                    <div className="h-full bg-primary/40 animate-pulse rounded-full" style={{ width: '40%', animationDelay: '200ms' }}></div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="h-1 flex-1 bg-muted rounded-full overflow-hidden">
+                    <div className="h-full bg-primary/20 animate-pulse rounded-full" style={{ width: '80%', animationDelay: '400ms' }}></div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        ))}
+        ) : findings.length === 0 ? (
+          <div className="text-center py-8">
+            <p className="text-sm text-muted-foreground">
+              Upload a document to see compliance findings
+            </p>
+          </div>
+        ) : (
+          findings.map((finding, index) => (
+            <div
+              key={index}
+              className={cn(
+                "p-4 rounded-md border transition-all hover:shadow-sm",
+                finding.type === "VIOLATION"
+                  ? "bg-violation-light border-destructive/30"
+                  : "bg-compliant-light border-success/30"
+              )}
+            >
+              <div className="flex items-start gap-3">
+                <div className="flex-1 min-w-0">
+                  <h3
+                    className={cn(
+                      "text-sm font-medium mb-1",
+                      finding.type === "VIOLATION"
+                        ? "text-destructive"
+                        : "text-success"
+                    )}
+                  >
+                    {finding.title}
+                  </h3>
+                  {finding.policy_reference && (
+                    <p className="text-xs text-muted-foreground mb-2">
+                      {finding.policy_reference}
+                    </p>
+                  )}
+                  <p className="text-sm text-foreground leading-relaxed">
+                    {finding.message}
+                  </p>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="mt-3 text-primary hover:text-primary p-0 h-auto"
+                    onClick={() => handleViewInDocument(finding)}
+                  >
+                    <Eye className="w-3 h-3 mr-1" />
+                    View in document (Page {finding.location_metadata.page_number})
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

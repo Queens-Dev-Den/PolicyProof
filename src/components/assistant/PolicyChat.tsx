@@ -3,45 +3,24 @@ import { Send, Bot, User, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { useDocumentContext } from "@/context/DocumentContext";
+import { toast } from "sonner";
 
 interface Message {
   id: string;
   role: "user" | "assistant";
   content: string;
   timestamp: Date;
-  references?: string[];
+  referencedFrameworks?: string[];
+  relevantArticles?: Array<{ title: string; source: string; url: string }>;
 }
 
-const initialMessages: Message[] = [
-  {
-    id: "1",
-    role: "user",
-    content: "Does GDPR allow storing customer data indefinitely?",
-    timestamp: new Date(Date.now() - 60000),
-  },
-  {
-    id: "2",
-    role: "assistant",
-    content: `**No, GDPR does not allow indefinite storage of customer data.**
-
-According to **GDPR Article 5(1)(e)** - the "storage limitation" principle - personal data must be:
-
-• Kept in a form which permits identification of data subjects for **no longer than necessary** for the purposes for which the data is processed
-
-• Personal data may be stored for longer periods only for archiving purposes in the public interest, scientific/historical research, or statistical purposes
-
-**Recommendation:** Implement a clear data retention policy that defines specific retention periods for each category of personal data, with automatic deletion or anonymization procedures.`,
-    timestamp: new Date(Date.now() - 30000),
-    references: ["GDPR Art. 5(1)(e)", "GDPR Art. 17"],
-  },
-];
-
 export function PolicyChat() {
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const { selectedFrameworks, chatMessages, setChatMessages } = useDocumentContext();
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!input.trim()) return;
 
     const userMessage: Message = {
@@ -51,31 +30,92 @@ export function PolicyChat() {
       timestamp: new Date(),
     };
 
-    setMessages((prev) => [...prev, userMessage]);
+    setChatMessages([...chatMessages, userMessage]);
+    const currentInput = input;
     setInput("");
     setIsTyping(true);
 
-    // Simulate AI response
-    setTimeout(() => {
+    try {
+      // Call backend API
+      const response = await fetch('http://localhost:5000/api/assistant/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: currentInput,
+          frameworks: selectedFrameworks,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get response from assistant');
+      }
+
+      const data = await response.json();
+
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: `I found relevant information about "${input}". Based on your organization's policy framework and applicable regulations, here's what you need to know...
-
-This is a simulated response. In production, this would connect to your policy database and AI backend for real compliance guidance.`,
+        content: data.answer,
         timestamp: new Date(),
-        references: ["Internal Policy DB", "Compliance Framework"],
+        referencedFrameworks: data.referenced_frameworks || [],
+        relevantArticles: data.relevant_articles || [],
       };
-      setMessages((prev) => [...prev, assistantMessage]);
+
+      setChatMessages([...chatMessages, userMessage, assistantMessage]);
+      
+      // Emit event to update PolicyContext panel
+      const event = new CustomEvent("updatePolicyContext", {
+        detail: {
+          referencedFrameworks: data.referenced_frameworks || [],
+          relevantArticles: data.relevant_articles || [],
+        },
+      });
+      window.dispatchEvent(event);
+
       setIsTyping(false);
-    }, 1500);
+    } catch (error) {
+      console.error('Error calling assistant API:', error);
+      toast.error('Failed to get response from assistant. Please try again.');
+      setIsTyping(false);
+      
+      // Remove user message if API call failed
+      setChatMessages(chatMessages.filter(msg => msg.id !== userMessage.id));
+      setInput(currentInput); // Restore input
+    }
   };
 
   return (
     <div className="enterprise-card h-full flex flex-col">
       {/* Messages */}
       <div className="flex-1 overflow-auto p-4 space-y-4 scrollbar-thin">
-        {messages.map((message) => (
+        {chatMessages.length === 0 && !isTyping ? (
+          <div className="h-full flex flex-col items-center justify-center text-center px-8">
+            <div className="flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 mb-6">
+              <Bot className="w-10 h-10 text-primary" />
+            </div>
+            <h3 className="text-xl font-semibold text-foreground mb-2">
+              PolicyProof AI Assistant
+            </h3>
+            <p className="text-sm text-muted-foreground max-w-md mb-6">
+              Ask questions about your selected compliance frameworks. I can help you understand regulations, policies, and best practices.
+            </p>
+            <div className="grid grid-cols-1 gap-2 max-w-md w-full">
+              <div className="text-xs text-muted-foreground text-left px-4 py-2 rounded-md bg-muted/30 border border-border">
+                💡 Example: "What are the GDPR requirements for data retention?"
+              </div>
+              <div className="text-xs text-muted-foreground text-left px-4 py-2 rounded-md bg-muted/30 border border-border">
+                💡 Example: "How does HIPAA define protected health information?"
+              </div>
+              <div className="text-xs text-muted-foreground text-left px-4 py-2 rounded-md bg-muted/30 border border-border">
+                💡 Example: "What security controls does ISO 27001 require?"
+              </div>
+            </div>
+          </div>
+        ) : (
+          <>
+            {chatMessages.map((message) => (
           <div
             key={message.id}
             className={cn(
@@ -99,7 +139,7 @@ This is a simulated response. In production, this would connect to your policy d
             </div>
             <div
               className={cn(
-                "max-w-[80%] space-y-2",
+                "max-w-[80%] space-y-2 flex flex-col",
                 message.role === "user" ? "items-end" : "items-start"
               )}
             >
@@ -117,6 +157,7 @@ This is a simulated response. In production, this would connect to your policy d
               </div>
               <div
                 className={cn(
+                  "inline-block",
                   message.role === "user"
                     ? "chat-bubble-user"
                     : "chat-bubble-assistant"
@@ -143,6 +184,8 @@ This is a simulated response. In production, this would connect to your policy d
             </div>
           </div>
         )}
+          </>
+        )}
       </div>
 
       {/* Input */}
@@ -152,7 +195,7 @@ This is a simulated response. In production, this would connect to your policy d
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSend()}
-            placeholder="Ask about your organization's policies…"
+            placeholder="Ask questions about the selected policies…"
             className="flex-1"
           />
           <Button onClick={handleSend} disabled={!input.trim() || isTyping}>
