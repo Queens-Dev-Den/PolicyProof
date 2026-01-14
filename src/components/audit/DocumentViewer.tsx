@@ -1,4 +1,4 @@
-import { Upload, FileText, ChevronLeft, ChevronRight, X, Check } from "lucide-react";
+import { Upload, FileText, ChevronLeft, ChevronRight, X, Check, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect, useRef } from "react";
@@ -14,18 +14,20 @@ export function DocumentViewer({
   document,
   fileName,
   onUpload,
+  onReanalyze,
   fileInputRef,
 }: {
   document: string;
   fileName: string;
   onUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onReanalyze: () => void;
   fileInputRef: React.RefObject<HTMLInputElement>;
 }) {
   const [numPages, setNumPages] = useState<number>(0);
   const [pageInput, setPageInput] = useState<string>("1");
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [containerWidth, setContainerWidth] = useState<number>(0);
-  const { findings } = useDocumentContext();
+  const { findings, isAnalyzing } = useDocumentContext();
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Get findings for current page
@@ -129,26 +131,38 @@ export function DocumentViewer({
   return (
     <div className="enterprise-card h-full w-full flex flex-col">
       <div className="p-4 border-b border-border flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <FileText className="w-4 h-4 text-muted-foreground" />
-          <h2 className="text-sm font-semibold text-foreground">
+        <div className="flex items-center gap-3 min-w-0 flex-1">
+          <FileText className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+          <h2 className="text-sm font-semibold text-foreground truncate">
             {fileName}
           </h2>
         </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="text-primary hover:text-primary"
-          onClick={() => {
-            if (fileInputRef.current) {
-              fileInputRef.current.value = ""; // Clear the input value to allow re-uploading
-              fileInputRef.current.click();
-            }
-          }}
-        >
-          <Upload className="w-4 h-4 mr-2" />
-          Upload New Document
-        </Button>
+        <div className="flex items-center gap-2 flex-shrink-0 ml-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-primary hover:text-primary"
+            onClick={onReanalyze}
+            disabled={isAnalyzing}
+          >
+            <RefreshCw className={`w-4 h-4 mr-2 ${isAnalyzing ? 'animate-spin' : ''}`} />
+            Re-analyze
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-primary hover:text-primary"
+            onClick={() => {
+              if (fileInputRef.current) {
+                fileInputRef.current.value = ""; // Clear the input value to allow re-uploading
+                fileInputRef.current.click();
+              }
+            }}
+          >
+            <Upload className="w-4 h-4 mr-2" />
+            Upload New Document
+          </Button>
+        </div>
       </div>
 
       {/* Page Navigation Controls */}
