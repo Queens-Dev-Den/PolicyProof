@@ -12,6 +12,15 @@ interface Finding {
   };
 }
 
+interface ChatMessage {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+  timestamp: Date;
+  referencedFrameworks?: string[];
+  relevantArticles?: Array<{ title: string; source: string }>;
+}
+
 interface DocumentContextType {
   uploadedDocument: string | null;
   fileName: string | null;
@@ -20,6 +29,9 @@ interface DocumentContextType {
   isAnalyzing: boolean;
   selectedFinding: Finding | null;
   selectedFrameworks: string[];
+  chatMessages: ChatMessage[];
+  referencedFrameworks: string[];
+  relevantArticles: Array<{ title: string; source: string }>;
   setUploadedDocument: (document: string | null) => void;
   setFileName: (name: string | null) => void;
   setUploadedFile: (file: File | null) => void;
@@ -27,6 +39,9 @@ interface DocumentContextType {
   setIsAnalyzing: (analyzing: boolean) => void;
   setSelectedFinding: (finding: Finding | null) => void;
   setSelectedFrameworks: (frameworks: string[]) => void;
+  setChatMessages: (messages: ChatMessage[]) => void;
+  setReferencedFrameworks: (frameworks: string[]) => void;
+  setRelevantArticles: (articles: Array<{ title: string; source: string }>) => void;
 }
 
 const DocumentContext = createContext<DocumentContextType | undefined>(undefined);
@@ -57,6 +72,9 @@ export const DocumentProvider = ({ children }: { children: ReactNode }) => {
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
   const [selectedFinding, setSelectedFinding] = useState<Finding | null>(null);
   const [selectedFrameworks, setSelectedFrameworks] = useState<string[]>(ALL_FRAMEWORKS);
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [referencedFrameworks, setReferencedFrameworks] = useState<string[]>([]);
+  const [relevantArticles, setRelevantArticles] = useState<Array<{ title: string; source: string }>>([]);
 
   return (
     <DocumentContext.Provider
@@ -68,13 +86,19 @@ export const DocumentProvider = ({ children }: { children: ReactNode }) => {
         isAnalyzing,
         selectedFinding,
         selectedFrameworks,
+        chatMessages,
+        referencedFrameworks,
+        relevantArticles,
         setUploadedDocument, 
         setFileName,
         setUploadedFile,
         setFindings,
         setIsAnalyzing,
         setSelectedFinding,
-        setSelectedFrameworks
+        setSelectedFrameworks,
+        setChatMessages,
+        setReferencedFrameworks,
+        setRelevantArticles
       }}
     >
       {children}
