@@ -90,7 +90,32 @@ export function PolicyChat() {
     <div className="enterprise-card h-full flex flex-col">
       {/* Messages */}
       <div className="flex-1 overflow-auto p-4 space-y-4 scrollbar-thin">
-        {chatMessages.map((message) => (
+        {chatMessages.length === 0 && !isTyping ? (
+          <div className="h-full flex flex-col items-center justify-center text-center px-8">
+            <div className="flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 mb-6">
+              <Bot className="w-10 h-10 text-primary" />
+            </div>
+            <h3 className="text-xl font-semibold text-foreground mb-2">
+              PolicyProof AI Assistant
+            </h3>
+            <p className="text-sm text-muted-foreground max-w-md mb-6">
+              Ask questions about your selected compliance frameworks. I can help you understand regulations, policies, and best practices.
+            </p>
+            <div className="grid grid-cols-1 gap-2 max-w-md w-full">
+              <div className="text-xs text-muted-foreground text-left px-4 py-2 rounded-md bg-muted/30 border border-border">
+                💡 Example: "What are the GDPR requirements for data retention?"
+              </div>
+              <div className="text-xs text-muted-foreground text-left px-4 py-2 rounded-md bg-muted/30 border border-border">
+                💡 Example: "How does HIPAA define protected health information?"
+              </div>
+              <div className="text-xs text-muted-foreground text-left px-4 py-2 rounded-md bg-muted/30 border border-border">
+                💡 Example: "What security controls does ISO 27001 require?"
+              </div>
+            </div>
+          </div>
+        ) : (
+          <>
+            {chatMessages.map((message) => (
           <div
             key={message.id}
             className={cn(
@@ -114,7 +139,7 @@ export function PolicyChat() {
             </div>
             <div
               className={cn(
-                "max-w-[80%] space-y-2",
+                "max-w-[80%] space-y-2 flex flex-col",
                 message.role === "user" ? "items-end" : "items-start"
               )}
             >
@@ -132,6 +157,7 @@ export function PolicyChat() {
               </div>
               <div
                 className={cn(
+                  "inline-block",
                   message.role === "user"
                     ? "chat-bubble-user"
                     : "chat-bubble-assistant"
@@ -157,6 +183,8 @@ export function PolicyChat() {
               </div>
             </div>
           </div>
+        )}
+          </>
         )}
       </div>
 
