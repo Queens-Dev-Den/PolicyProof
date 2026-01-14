@@ -48,3 +48,47 @@ REPORT_TOOL = {
         "required": ["findings"]
     }
 }
+
+ASSISTANT_RESPONSE_TOOL = {
+    "name": "provide_policy_guidance",
+    "description": "Provides policy guidance and answers questions about compliance frameworks with references.",
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "answer": {
+                "type": "string",
+                "description": "The detailed answer to the user's question about policy frameworks and compliance."
+            },
+            "referenced_frameworks": {
+                "type": "array",
+                "description": "List of compliance frameworks referenced in the answer (e.g., ['GDPR', 'HIPAA']).",
+                "items": {
+                    "type": "string"
+                }
+            },
+            "relevant_articles": {
+                "type": "array",
+                "description": "List of specific articles, clauses, or sections cited in the answer.",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "title": {
+                            "type": "string",
+                            "description": "The article or clause title (e.g., 'GDPR Art. 5 – Storage Limitation')"
+                        },
+                        "source": {
+                            "type": "string",
+                            "description": "The framework this article belongs to (e.g., 'GDPR')"
+                        },
+                        "url": {
+                            "type": "string",
+                            "description": "A direct URL link to the official article or regulation text"
+                        }
+                    },
+                    "required": ["title", "source", "url"]
+                }
+            }
+        },
+        "required": ["answer", "referenced_frameworks", "relevant_articles"]
+    }
+}

@@ -5,7 +5,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from PyPDF2 import PdfReader
 from dotenv import load_dotenv
-from schema import REPORT_TOOL
+from schema import REPORT_TOOL, ASSISTANT_RESPONSE_TOOL
 
 # Load environment variables
 load_dotenv()
@@ -144,6 +144,75 @@ def analyze_document():
 def health_check():
     """Health check endpoint."""
     return jsonify({'status': 'healthy'}), 200
+
+@app.route('/api/assistant/chat', methods=['POST'])
+def assistant_chat():
+    """Endpoint for live assistant chat with Claude AI."""
+    try:
+        data = request.get_json()
+        
+        if not data or 'message' not in data:
+            return jsonify({'error': 'No message provided'}), 400
+        
+        user_message = data['message']
+        selected_frameworks = data.get('frameworks', [])
+        
+        # Build the prompt with selected frameworks
+        if selected_frameworks and len(selected_frameworks) > 0:
+            frameworks_list = ", ".join(selected_frameworks)
+            framework_context = f"The user has selected these compliance frameworks: {frameworks_list}. Focus your answer on these specific frameworks."
+        else:
+            framework_context = "Answer based on general compliance and policy frameworks."
+        
+        prompt = f"""You are a compliance and policy expert assistant. Answer the user's question about policy frameworks and compliance requirements.
+
+{framework_context}
+
+User question: {user_message}
+
+Provide a detailed, accurate answer. Use the provide_policy_guidance tool to structure your response with:
+1. A comprehensive answer to the question
+2. The frameworks you referenced in your answer
+3. Specific articles, clauses, or sections you cited
+
+Be professional, accurate, and cite specific regulations or standards where appropriate."""
+
+        # Prepare the API request
+        request_body = {
+            "anthropic_version": "bedrock-2023-05-31",
+            "max_tokens": 2048,
+            "messages": [
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
+            "tools": [ASSISTANT_RESPONSE_TOOL],
+            "tool_choice": {
+                "type": "tool",
+                "name": "provide_policy_guidance"
+            }
+        }
+        
+        # Call Bedrock API
+        response = bedrock_runtime.invoke_model(
+            modelId='us.anthropic.claude-3-5-sonnet-20241022-v2:0',
+            body=json.dumps(request_body)
+        )
+        
+        # Parse the response
+        response_body = json.loads(response['body'].read())
+        
+        # Extract tool use result
+        for content in response_body.get('content', []):
+            if content.get('type') == 'tool_use' and content.get('name') == 'provide_policy_guidance':
+                return jsonify(content.get('input', {})), 200
+        
+        return jsonify({'error': 'No response generated'}), 500
+    
+    except Exception as e:
+        print(f"Error in assistant chat: {str(e)}")
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     port = int(os.getenv('BACKEND_PORT', 5000))
