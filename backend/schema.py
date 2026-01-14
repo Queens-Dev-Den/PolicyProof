@@ -79,9 +79,13 @@ ASSISTANT_RESPONSE_TOOL = {
                         "source": {
                             "type": "string",
                             "description": "The framework this article belongs to (e.g., 'GDPR')"
+                        },
+                        "url": {
+                            "type": "string",
+                            "description": "A direct URL link to the official article or regulation text"
                         }
                     },
-                    "required": ["title", "source"]
+                    "required": ["title", "source", "url"]
                 }
             }
         },

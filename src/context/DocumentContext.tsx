@@ -18,7 +18,7 @@ interface ChatMessage {
   content: string;
   timestamp: Date;
   referencedFrameworks?: string[];
-  relevantArticles?: Array<{ title: string; source: string }>;
+  relevantArticles?: Array<{ title: string; source: string; url: string }>;
 }
 
 interface DocumentContextType {
@@ -31,7 +31,7 @@ interface DocumentContextType {
   selectedFrameworks: string[];
   chatMessages: ChatMessage[];
   referencedFrameworks: string[];
-  relevantArticles: Array<{ title: string; source: string }>;
+  relevantArticles: Array<{ title: string; source: string; url: string }>;
   setUploadedDocument: (document: string | null) => void;
   setFileName: (name: string | null) => void;
   setUploadedFile: (file: File | null) => void;
@@ -41,7 +41,7 @@ interface DocumentContextType {
   setSelectedFrameworks: (frameworks: string[]) => void;
   setChatMessages: (messages: ChatMessage[]) => void;
   setReferencedFrameworks: (frameworks: string[]) => void;
-  setRelevantArticles: (articles: Array<{ title: string; source: string }>) => void;
+  setRelevantArticles: (articles: Array<{ title: string; source: string; url: string }>) => void;
 }
 
 const DocumentContext = createContext<DocumentContextType | undefined>(undefined);
@@ -74,7 +74,7 @@ export const DocumentProvider = ({ children }: { children: ReactNode }) => {
   const [selectedFrameworks, setSelectedFrameworks] = useState<string[]>(ALL_FRAMEWORKS);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [referencedFrameworks, setReferencedFrameworks] = useState<string[]>([]);
-  const [relevantArticles, setRelevantArticles] = useState<Array<{ title: string; source: string }>>([]);
+  const [relevantArticles, setRelevantArticles] = useState<Array<{ title: string; source: string; url: string }>>([]);
 
   return (
     <DocumentContext.Provider

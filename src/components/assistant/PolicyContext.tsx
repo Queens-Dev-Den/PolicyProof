@@ -21,9 +21,13 @@ export function PolicyContext() {
     };
   }, [setReferencedFrameworks, setRelevantArticles]);
 
-  const handleCopy = (text: string) => {
-    navigator.clipboard.writeText(text);
-    toast.success("Citation copied to clipboard");
+  const handleCopy = (url: string) => {
+    navigator.clipboard.writeText(url);
+    toast.success("Link copied to clipboard");
+  };
+
+  const handleOpenLink = (url: string) => {
+    window.open(url, '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -89,11 +93,16 @@ export function PolicyContext() {
                         variant="ghost"
                         size="sm"
                         className="h-7 w-7 p-0"
-                        onClick={() => handleCopy(article.title)}
+                        onClick={() => handleCopy(article.url)}
                       >
                         <Copy className="w-3 h-3" />
                       </Button>
-                      <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="h-7 w-7 p-0"
+                        onClick={() => handleOpenLink(article.url)}
+                      >
                         <ExternalLink className="w-3 h-3" />
                       </Button>
                     </div>

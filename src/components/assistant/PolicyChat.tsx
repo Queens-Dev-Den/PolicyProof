@@ -12,7 +12,7 @@ interface Message {
   content: string;
   timestamp: Date;
   referencedFrameworks?: string[];
-  relevantArticles?: Array<{ title: string; source: string }>;
+  relevantArticles?: Array<{ title: string; source: string; url: string }>;
 }
 
 export function PolicyChat() {
