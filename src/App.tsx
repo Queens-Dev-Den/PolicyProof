@@ -2,12 +2,13 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { ClerkProvider, SignedIn, SignedOut, RedirectToSignIn } from "@clerk/clerk-react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { ClerkProvider, SignedIn, SignedOut } from "@clerk/clerk-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import DocumentAudit from "./pages/DocumentAudit";
 import LiveAssistant from "./pages/LiveAssistant";
 import Landing from "./pages/Landing";
+import SignUpPage from "./pages/SignUpPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,8 +32,9 @@ const App = () => (
             <Route path="/" element={<Landing />} />
             
             {/* Auth Pages */}
-            <Route path="/sign-in/*" element={<Landing />} />
-            <Route path="/sign-up/*" element={<Landing />} />
+            <Route path="/authentication" element={<SignUpPage />} />
+            <Route path="/sign-in/*" element={<SignUpPage />} />
+            <Route path="/sign-up/*" element={<SignUpPage />} />
             
             {/* Protected Routes */}
             <Route
@@ -45,7 +47,7 @@ const App = () => (
                     </DashboardLayout>
                   </SignedIn>
                   <SignedOut>
-                    <RedirectToSignIn />
+                    <Navigate to="/" replace />
                   </SignedOut>
                 </>
               }
@@ -60,7 +62,7 @@ const App = () => (
                     </DashboardLayout>
                   </SignedIn>
                   <SignedOut>
-                    <RedirectToSignIn />
+                    <Navigate to="/" replace />
                   </SignedOut>
                 </>
               }

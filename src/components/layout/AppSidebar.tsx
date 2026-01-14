@@ -90,7 +90,7 @@ export function AppSidebar() {
     >
       {/* Logo */}
       <div className="flex items-center h-14 px-4 border-b border-border">
-        <Link to="/" className="flex items-center gap-2 overflow-hidden">
+        <div className="flex items-center gap-2 overflow-hidden">
           <div className="flex items-center justify-center w-8 h-8 rounded-md bg-primary flex-shrink-0">
             <Shield className="w-5 h-5 text-primary-foreground" />
           </div>
@@ -102,7 +102,7 @@ export function AppSidebar() {
           >
             PolicyProof
           </span>
-        </Link>
+        </div>
       </div>
 
       {/* Navigation */}

@@ -1,12 +1,21 @@
-import { SignIn, SignUp, SignedIn } from "@clerk/clerk-react";
 import { Shield, FileSearch, Sparkles, Lock, CheckCircle, ArrowRight } from "lucide-react";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useUser } from "@clerk/clerk-react";
 
 export default function Landing() {
   const navigate = useNavigate();
-  const [showSignUp, setShowSignUp] = useState(false);
+  const { isSignedIn, isLoaded } = useUser();
+
+  // Redirect to dashboard if user is signed in
+  if (isLoaded && isSignedIn) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  // Show nothing while loading to prevent flash
+  if (!isLoaded) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
@@ -29,84 +38,14 @@ export default function Landing() {
             15+ regulatory frameworks including GDPR, HIPAA, SOC 2, and more.
           </p>
 
-          <SignedIn>
-            <Button
-              size="lg"
-              onClick={() => navigate("/dashboard")}
-              className="text-lg px-8"
-            >
-              Go to Dashboard
-              <ArrowRight className="ml-2 w-5 h-5" />
-            </Button>
-          </SignedIn>
-        </div>
-
-        {/* Auth Section */}
-        <div className="max-w-md mx-auto mb-16">
-          <div className="bg-card border border-border rounded-lg shadow-lg p-6">
-            <div className="flex gap-2 mb-6">
-              <button
-                className={`flex-1 py-2 px-4 rounded-md font-medium transition-colors ${
-                  !showSignUp
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-transparent text-muted-foreground hover:text-foreground hover:bg-accent"
-                }`}
-                onClick={() => setShowSignUp(false)}
-              >
-                Sign In
-              </button>
-              <button
-                className={`flex-1 py-2 px-4 rounded-md font-medium transition-colors ${
-                  showSignUp
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-transparent text-muted-foreground hover:text-foreground hover:bg-accent"
-                }`}
-                onClick={() => setShowSignUp(true)}
-              >
-                Sign Up
-              </button>
-            </div>
-
-            <div className="flex items-center justify-center">
-              {showSignUp ? (
-                <SignUp
-                  appearance={{
-                    elements: {
-                      rootBox: "w-full",
-                      card: "shadow-none bg-transparent",
-                      headerTitle: "text-foreground",
-                      headerSubtitle: "text-muted-foreground",
-                      socialButtonsBlockButton: "border-border hover:bg-accent",
-                      formButtonPrimary: "bg-primary hover:bg-primary/90",
-                      formFieldLabel: "text-foreground",
-                      formFieldInput: "border-border bg-background text-foreground",
-                      footerActionLink: "text-primary hover:text-primary/90",
-                    },
-                  }}
-                  fallbackRedirectUrl="/dashboard"
-                  forceRedirectUrl="/dashboard"
-                />
-              ) : (
-                <SignIn
-                  appearance={{
-                    elements: {
-                      rootBox: "w-full",
-                      card: "shadow-none bg-transparent",
-                      headerTitle: "text-foreground",
-                      headerSubtitle: "text-muted-foreground",
-                      socialButtonsBlockButton: "border-border hover:bg-accent",
-                      formButtonPrimary: "bg-primary hover:bg-primary/90",
-                      formFieldLabel: "text-foreground",
-                      formFieldInput: "border-border bg-background text-foreground",
-                      footerActionLink: "text-primary hover:text-primary/90",
-                    },
-                  }}
-                  fallbackRedirectUrl="/dashboard"
-                  forceRedirectUrl="/dashboard"
-                />
-              )}
-            </div>
-          </div>
+          <Button
+            size="lg"
+            onClick={() => navigate("/authentication")}
+            className="text-lg px-8"
+          >
+            Get Started
+            <ArrowRight className="ml-2 w-5 h-5" />
+          </Button>
         </div>
 
         {/* Features Grid */}
