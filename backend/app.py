@@ -35,7 +35,7 @@ def extract_text_from_pdf(pdf_file):
     
     return text_content
 
-def analyze_document_with_bedrock(pdf_content, compliance_framework=None):
+def analyze_document_with_bedrock(pdf_content, frameworks=None):
     """Send document to AWS Bedrock Claude for analysis."""
     
     # Construct the full document text
@@ -44,8 +44,13 @@ def analyze_document_with_bedrock(pdf_content, compliance_framework=None):
         for page in pdf_content
     ])
     
-    # Build the prompt
-    framework_text = f" against {compliance_framework}" if compliance_framework else ""
+    # Build the prompt with selected frameworks
+    if frameworks and len(frameworks) > 0:
+        frameworks_list = ", ".join(frameworks)
+        framework_text = f" against the following compliance frameworks: {frameworks_list}"
+    else:
+        framework_text = ""
+    
     prompt = f"""You are a compliance expert analyzing a policy document{framework_text}.
 
 Review the following document and identify all violations and compliant sections. For each finding:
@@ -53,8 +58,10 @@ Review the following document and identify all violations and compliant sections
 - Provide a clear title
 - Identify the specific section
 - Explain the issue or compliance in detail
-- Reference the specific policy/regulation
+- Reference the specific policy/regulation from the frameworks you're checking against
 - Include the page number and exact quote from the document
+
+{"IMPORTANT: Only check against these specific frameworks: " + frameworks_list + ". Do not check against any other compliance standards." if frameworks and len(frameworks) > 0 else ""}
 
 Document to analyze:
 
@@ -111,14 +118,20 @@ def analyze_document():
         if not file.filename.lower().endswith('.pdf'):
             return jsonify({'error': 'Only PDF files are supported'}), 400
         
-        # Get optional compliance framework parameter
-        compliance_framework = request.form.get('framework', None)
+        # Get selected frameworks from request
+        frameworks = None
+        frameworks_json = request.form.get('frameworks', None)
+        if frameworks_json:
+            try:
+                frameworks = json.loads(frameworks_json)
+            except json.JSONDecodeError:
+                frameworks = None
         
         # Extract text from PDF
         pdf_content = extract_text_from_pdf(file)
         
         # Analyze with Bedrock
-        analysis_result = analyze_document_with_bedrock(pdf_content, compliance_framework)
+        analysis_result = analyze_document_with_bedrock(pdf_content, frameworks)
         
         # Return the findings
         return jsonify(analysis_result), 200
