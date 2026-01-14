@@ -10,11 +10,14 @@ export default function DocumentAudit() {
   const {
     uploadedDocument,
     fileName,
+    uploadedFile,
     setUploadedDocument,
     setFileName,
+    setUploadedFile,
     setFindings,
     isAnalyzing,
     setIsAnalyzing,
+    selectedFrameworks,
   } = useDocumentContext();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const { toast } = useToast();
@@ -32,6 +35,7 @@ export default function DocumentAudit() {
     try {
       const formData = new FormData();
       formData.append('file', file);
+      formData.append('frameworks', JSON.stringify(selectedFrameworks));
       
       const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
       const response = await fetch(`${backendUrl}/api/analyze-document`, {
@@ -68,10 +72,18 @@ export default function DocumentAudit() {
       const fileURL = URL.createObjectURL(file);
       setUploadedDocument(fileURL); // Update the document URL
       setFileName(file.name); // Update the file name
+      setUploadedFile(file); // Store the file object
       setFindings([]); // Clear previous findings
       
       // Analyze the document
       await analyzeDocument(file);
+    }
+  };
+
+  const handleReanalyze = async () => {
+    if (uploadedFile) {
+      setFindings([]); // Clear previous findings
+      await analyzeDocument(uploadedFile);
     }
   };
 
@@ -109,6 +121,7 @@ export default function DocumentAudit() {
               document={uploadedDocument}
               fileName={fileName || "Document"}
               onUpload={handleFileChange}
+              onReanalyze={handleReanalyze}
               fileInputRef={fileInputRef}
             />
           ) : (
