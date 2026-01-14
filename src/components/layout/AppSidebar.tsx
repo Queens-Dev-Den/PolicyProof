@@ -196,7 +196,7 @@ export function AppSidebar() {
                     />
                     <span
                       className={cn(
-                        "text-sm font-medium leading-none select-none flex-1"
+                        "text-sm font-medium leading-none select-none flex-1 whitespace-nowrap overflow-hidden text-ellipsis"
                       )}
                     >
                       {framework}
