@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation, Link } from "react-router-dom";
-import { useUser, useClerk } from "@clerk/clerk-react";
+import { UserButton, useUser } from "@clerk/clerk-react";
 import {
   FileSearch,
   MessageSquare,
@@ -58,7 +58,6 @@ export function AppSidebar() {
   const location = useLocation();
   const { selectedFrameworks, setSelectedFrameworks } = useDocumentContext();
   const { user } = useUser();
-  const { signOut } = useClerk();
 
   const handleFrameworkToggle = (framework: string) => {
     if (selectedFrameworks.includes(framework)) {
@@ -234,31 +233,26 @@ export function AppSidebar() {
       </div>
 
       {/* User Profile Footer */}
+      {/* User Profile Footer */}
       <div className="border-t border-border flex-shrink-0" style={{ padding: '0.75rem', minHeight: '4rem' }}>
         <div className="flex items-center gap-3" style={{ height: '2rem' }}>
-          <Avatar className="w-8 h-8 flex-shrink-0">
-            <AvatarFallback className="bg-muted text-muted-foreground text-xs">
-              {user?.firstName?.charAt(0) || user?.username?.charAt(0) || <User className="w-4 h-4" />}
-            </AvatarFallback>
-          </Avatar>
+          <UserButton 
+            afterSignOutUrl="/"
+            appearance={{
+              elements: {
+                avatarBox: "w-8 h-8",
+              }
+            }}
+          />
           {!collapsed && (
-            <div className="flex-1 min-w-0">
+            <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
               <p className="text-sm font-medium text-foreground truncate">
-                {user?.firstName || user?.username || "User"}
+                {user?.fullName || user?.username || "User"}
               </p>
               <p className="text-xs text-muted-foreground truncate">
                 {user?.primaryEmailAddress?.emailAddress || ""}
               </p>
             </div>
-          )}
-          {!collapsed && (
-            <button
-              onClick={() => signOut(() => window.location.href = '/')}
-              className="flex items-center justify-center w-8 h-8 rounded-md hover:bg-sidebar-accent text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
-              title="Sign out"
-            >
-              <LogOut className="w-4 h-4" />
-            </button>
           )}
         </div>
       </div>
