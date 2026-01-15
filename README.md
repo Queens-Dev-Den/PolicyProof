@@ -17,13 +17,22 @@ PolicyProof is a web application that helps organizations analyze their policy d
 
 ## Tech Stack
 
+### Development
 - **Frontend**: React, TypeScript, Vite
-- **UI Components**: shadcn-ui, Tailwind CSS
+- **UI Components**: shadcn-ui, Tailwind CSS, Framer Motion
 - **Authentication**: Clerk
 - **PDF Rendering**: react-pdf
-- **AI Analysis**: AWS Bedrock (Claude)
+- **AI Analysis**: AWS Bedrock (Claude 3.5 Sonnet)
 - **Backend**: Flask (Python)
 - **Routing**: React Router
+
+### Hosting & Infrastructure
+- **Frontend Hosting**: Vercel
+- **Backend Hosting**: Render
+- **Domain**: GoDaddy (DNS)
+- **Authentication**: Clerk (Production)
+- **AI Processing**: AWS Bedrock (us-east-1)
+- **SSL**: Vercel (Auto-provisioned)
 
 ## Getting Started
 
@@ -74,24 +83,21 @@ python app.py
 
 The application will be available at `http://localhost:5173`
 
-## What technologies are used for this project?
+## Deployment
 
-This project is built with:
+For detailed deployment instructions, see [DEPLOYMENT.md](./DEPLOYMENT.md)
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### Quick Deploy Summary
 
-## How can I deploy this project?
+1. **Backend (Render)**: Deploy Flask API with AWS Bedrock integration
+2. **Frontend (Vercel)**: Deploy React app with Clerk authentication
+3. **Domain (GoDaddy)**: Configure DNS to point to Vercel
+4. **SSL**: Automatically provisioned by Vercel
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+**Production Stack:**
+- Frontend: Vercel (https://policyproof.com)
+- Backend: Render (https://policyproof-backend.onrender.com)
+- Auth: Clerk Production
+- AI: AWS Bedrock (us-east-1)
 
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for step-by-step instructions.
