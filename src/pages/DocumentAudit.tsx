@@ -34,7 +34,8 @@ export default function DocumentAudit() {
   const analyzeDocument = async (file: File) => {
     setIsAnalyzing(true);
     
-    tr// Get auth token from Clerk
+    try {
+      // Get auth token from Clerk
       const token = await getToken();
       
       const formData = new FormData();
@@ -46,8 +47,7 @@ export default function DocumentAudit() {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
-        } await fetch(`${backendUrl}/api/analyze-document`, {
-        method: 'POST',
+        },
         body: formData,
       });
       
