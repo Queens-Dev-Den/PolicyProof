@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Upload, Loader2 } from "lucide-react";
 import { useDocumentContext } from "@/context/DocumentContext";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@clerk/clerk-react";
 
 export default function DocumentAudit() {
   const {
@@ -21,6 +22,7 @@ export default function DocumentAudit() {
   } = useDocumentContext();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const { toast } = useToast();
+  const { getToken } = useAuth();
 
   const handleButtonClick = () => {
     if (fileInputRef.current) {
@@ -33,6 +35,9 @@ export default function DocumentAudit() {
     setIsAnalyzing(true);
     
     try {
+      // Get auth token from Clerk
+      const token = await getToken();
+      
       const formData = new FormData();
       formData.append('file', file);
       formData.append('frameworks', JSON.stringify(selectedFrameworks));
@@ -40,6 +45,9 @@ export default function DocumentAudit() {
       const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
       const response = await fetch(`${backendUrl}/api/analyze-document`, {
         method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
         body: formData,
       });
       

@@ -1,73 +1,103 @@
-# Welcome to your Lovable project
+# PolicyProof
 
-## Project info
+AI-Powered Policy Compliance Analysis Tool
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## Overview
 
-## How can I edit this code?
+PolicyProof is a web application that helps organizations analyze their policy documents for compliance against 15+ regulatory frameworks including GDPR, HIPAA, SOC 2, ISO 27001, and more. Using AWS Bedrock's Claude AI, it provides instant compliance analysis with detailed findings and recommendations.
 
-There are several ways of editing your application.
+## Features
 
-**Use Lovable**
+- 📄 **PDF Document Analysis** - Upload and analyze policy documents
+- 🔍 **Multi-Framework Compliance** - Check against 15+ regulatory frameworks
+- 🤖 **AI-Powered Insights** - Leverages Claude AI for intelligent analysis
+- 🔐 **Secure Authentication** - Clerk authentication for user management
+- 💬 **Live Assistant** - Interactive policy guidance
+- ⚙️ **Governance Settings** - Manage policy directories and frameworks
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+## Tech Stack
 
-Changes made via Lovable will be committed automatically to this repo.
+### Development
+- **Frontend**: React, TypeScript, Vite
+- **UI Components**: shadcn-ui, Tailwind CSS, Framer Motion
+- **Authentication**: Clerk
+- **PDF Rendering**: react-pdf
+- **AI Analysis**: AWS Bedrock (Claude 3.5 Sonnet)
+- **Backend**: Flask (Python)
+- **Routing**: React Router
 
-**Use your preferred IDE**
+### Hosting & Infrastructure
+- **Frontend Hosting**: Vercel
+- **Backend Hosting**: Render
+- **Domain**: GoDaddy (DNS)
+- **Authentication**: Clerk (Google Cloud Platform)
+- **AI Processing**: AWS Bedrock (us-east-1)
+- **SSL**: Vercel (Auto-provisioned)
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## Getting Started
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Prerequisites
 
-Follow these steps:
+- Node.js & npm - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- Python 3.8+ (for backend)
+- AWS Account with Bedrock access
+- Clerk account for authentication
+
+### Installation
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
+# Clone the repository
 git clone <YOUR_GIT_URL>
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Navigate to the project directory
+cd PolicyProof
 
-# Step 3: Install the necessary dependencies.
+# Install frontend dependencies
 npm i
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+# Install backend dependencies
+cd backend
+pip install -r requirements.txt
 ```
 
-**Edit a file directly in GitHub**
+### Configuration
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+1. Create a `.env` file in the root directory:
+```env
+VITE_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+VITE_BACKEND_URL=http://localhost:5000
+```
 
-**Use GitHub Codespaces**
+2. Configure AWS credentials for Bedrock access
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Running the Application
 
-## What technologies are used for this project?
+```sh
+# Start the frontend development server
+npm run dev
 
-This project is built with:
+# In a separate terminal, start the backend server
+cd backend
+python app.py
+```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+The application will be available at `http://localhost:5173`
 
-## How can I deploy this project?
+## Deployment
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+For detailed deployment instructions, see [DEPLOYMENT.md](./DEPLOYMENT.md)
 
-## Can I connect a custom domain to my Lovable project?
+### Quick Deploy Summary
 
-Yes, you can!
+1. **Backend (Render)**: Deploy Flask API with AWS Bedrock integration
+2. **Frontend (Vercel)**: Deploy React app with Clerk authentication
+3. **Domain (GoDaddy)**: Configure DNS to point to Vercel
+4. **SSL**: Automatically provisioned by Vercel
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+**Production Stack:**
+- Frontend: Vercel (https://policyproof.com)
+- Backend: Render (https://policyproof-backend.onrender.com)
+- Auth: Clerk Production
+- AI: AWS Bedrock (us-east-1)
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for step-by-step instructions.

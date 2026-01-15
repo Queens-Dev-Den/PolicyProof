@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { useDocumentContext } from "@/context/DocumentContext";
+import { useAuth } from "@clerk/clerk-react";
 import { toast } from "sonner";
 
 interface Message {
@@ -19,6 +20,7 @@ export function PolicyChat() {
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const { selectedFrameworks, chatMessages, setChatMessages } = useDocumentContext();
+  const { getToken } = useAuth();
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -36,11 +38,16 @@ export function PolicyChat() {
     setIsTyping(true);
 
     try {
+      // Get auth token from Clerk
+      const token = await getToken();
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+      
       // Call backend API
-      const response = await fetch('http://localhost:5000/api/assistant/chat', {
+      const response = await fetch(`${backendUrl}/api/assistant/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
           message: currentInput,

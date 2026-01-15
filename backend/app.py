@@ -11,7 +11,9 @@ from schema import REPORT_TOOL, ASSISTANT_RESPONSE_TOOL
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app)
+# Configure CORS - origins can be set via CORS_ORIGINS env variable (comma-separated)
+cors_origins = os.getenv('CORS_ORIGINS', '*').split(',')
+CORS(app, resources={r"/*": {"origins": cors_origins}})
 
 # Initialize AWS Bedrock client
 bedrock_runtime = boto3.client(
@@ -53,7 +55,11 @@ def analyze_document_with_bedrock(pdf_content, frameworks=None):
     
     prompt = f"""You are a compliance expert analyzing a policy document{framework_text}.
 
-Review the following document and identify all violations and compliant sections. For each finding:
+Review the following document and identify BOTH violations AND compliant sections. You must report:
+1. VIOLATIONS - Any non-compliant sections, missing requirements, or policy gaps
+2. COMPLIANCE - Any sections that properly implement the required controls and meet standards
+
+For EACH finding (both violations and compliances):
 - Clearly state whether it's a VIOLATION or COMPLIANCE
 - Provide a clear title
 - Identify the specific section
@@ -61,13 +67,15 @@ Review the following document and identify all violations and compliant sections
 - Reference the specific policy/regulation from the frameworks you're checking against
 - Include the page number and exact quote from the document
 
+IMPORTANT: You MUST include BOTH types of findings. Do not only report violations - also report what the document does well and where it is compliant.
+
 {"IMPORTANT: Only check against these specific frameworks: " + frameworks_list + ". Do not check against any other compliance standards." if frameworks and len(frameworks) > 0 else ""}
 
 Document to analyze:
 
 {full_text}
 
-Please analyze this document thoroughly and use the generate_policy_report tool to return your findings."""
+Please analyze this document thoroughly and use the generate_policy_report tool to return ALL your findings (both violations and compliances)."""
 
     # Prepare the API request
     request_body = {
