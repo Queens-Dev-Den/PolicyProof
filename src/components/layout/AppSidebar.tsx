@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { useUser, useClerk } from "@clerk/clerk-react";
 import {
-  Shield,
   FileSearch,
   MessageSquare,
   Settings,
@@ -91,9 +90,7 @@ export function AppSidebar() {
       {/* Logo */}
       <div className="flex items-center h-14 px-4 border-b border-border">
         <div className="flex items-center gap-2 overflow-hidden">
-          <div className="flex items-center justify-center w-8 h-8 rounded-md bg-primary flex-shrink-0">
-            <Shield className="w-5 h-5 text-primary-foreground" />
-          </div>
+          <img src="/PolicyProofLogo.png" alt="PolicyProof" className="w-8 h-8 flex-shrink-0" />
           <span
             className={cn(
               "font-semibold text-foreground whitespace-nowrap transition-all duration-300",

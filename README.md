@@ -1,54 +1,78 @@
-# Welcome to your Lovable project
+# PolicyProof
 
-## Project info
+AI-Powered Policy Compliance Analysis Tool
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## Overview
 
-## How can I edit this code?
+PolicyProof is a web application that helps organizations analyze their policy documents for compliance against 15+ regulatory frameworks including GDPR, HIPAA, SOC 2, ISO 27001, and more. Using AWS Bedrock's Claude AI, it provides instant compliance analysis with detailed findings and recommendations.
 
-There are several ways of editing your application.
+## Features
 
-**Use Lovable**
+- 📄 **PDF Document Analysis** - Upload and analyze policy documents
+- 🔍 **Multi-Framework Compliance** - Check against 15+ regulatory frameworks
+- 🤖 **AI-Powered Insights** - Leverages Claude AI for intelligent analysis
+- 🔐 **Secure Authentication** - Clerk authentication for user management
+- 💬 **Live Assistant** - Interactive policy guidance
+- ⚙️ **Governance Settings** - Manage policy directories and frameworks
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+## Tech Stack
 
-Changes made via Lovable will be committed automatically to this repo.
+- **Frontend**: React, TypeScript, Vite
+- **UI Components**: shadcn-ui, Tailwind CSS
+- **Authentication**: Clerk
+- **PDF Rendering**: react-pdf
+- **AI Analysis**: AWS Bedrock (Claude)
+- **Backend**: Flask (Python)
+- **Routing**: React Router
 
-**Use your preferred IDE**
+## Getting Started
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Prerequisites
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- Node.js & npm - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- Python 3.8+ (for backend)
+- AWS Account with Bedrock access
+- Clerk account for authentication
 
-Follow these steps:
+### Installation
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
+# Clone the repository
 git clone <YOUR_GIT_URL>
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Navigate to the project directory
+cd PolicyProof
 
-# Step 3: Install the necessary dependencies.
+# Install frontend dependencies
 npm i
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+# Install backend dependencies
+cd backend
+pip install -r requirements.txt
 ```
 
-**Edit a file directly in GitHub**
+### Configuration
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+1. Create a `.env` file in the root directory:
+```env
+VITE_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+VITE_BACKEND_URL=http://localhost:5000
+```
 
-**Use GitHub Codespaces**
+2. Configure AWS credentials for Bedrock access
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Running the Application
+
+```sh
+# Start the frontend development server
+npm run dev
+
+# In a separate terminal, start the backend server
+cd backend
+python app.py
+```
+
+The application will be available at `http://localhost:5173`
 
 ## What technologies are used for this project?
 

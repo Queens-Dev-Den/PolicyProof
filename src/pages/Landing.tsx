@@ -1,4 +1,4 @@
-import { Shield, FileSearch, Sparkles, Lock, CheckCircle, ArrowRight } from "lucide-react";
+import { FileSearch, Sparkles, Lock, CheckCircle, ArrowRight } from "lucide-react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@clerk/clerk-react";
@@ -22,9 +22,7 @@ export default function Landing() {
       {/* Hero Section */}
       <div className="container mx-auto px-4 py-16">
         <div className="flex items-center justify-center gap-3 mb-8">
-          <div className="flex items-center justify-center w-14 h-14 rounded-xl bg-primary">
-            <Shield className="w-8 h-8 text-primary-foreground" />
-          </div>
+          <img src="/PolicyProofLogo.png" alt="PolicyProof" className="w-14 h-14" />
           <h1 className="text-4xl font-bold text-foreground">PolicyProof</h1>
         </div>
 

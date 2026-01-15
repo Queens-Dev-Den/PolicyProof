@@ -1,5 +1,4 @@
 import { SignUp, SignIn } from "@clerk/clerk-react";
-import { Shield } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
@@ -37,9 +36,7 @@ export default function SignUpPage() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <Link to="/" className="flex items-center justify-center gap-3 mb-8">
-          <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-primary">
-            <Shield className="w-7 h-7 text-primary-foreground" />
-          </div>
+          <img src="/PolicyProofLogo.png" alt="PolicyProof" className="w-12 h-12" />
           <h1 className="text-3xl font-bold text-foreground">PolicyProof</h1>
         </Link>
 
