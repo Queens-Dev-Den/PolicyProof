@@ -11,7 +11,9 @@ from schema import REPORT_TOOL, ASSISTANT_RESPONSE_TOOL
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app)
+# Configure CORS - origins can be set via CORS_ORIGINS env variable (comma-separated)
+cors_origins = os.getenv('CORS_ORIGINS', '*').split(',')
+CORS(app, resources={r"/*": {"origins": cors_origins}})
 
 # Initialize AWS Bedrock client
 bedrock_runtime = boto3.client(
