@@ -30,7 +30,7 @@ PolicyProof is a web application that helps organizations analyze their policy d
 - **Frontend Hosting**: Vercel
 - **Backend Hosting**: Render
 - **Domain**: GoDaddy (DNS)
-- **Authentication**: Clerk (Production)
+- **Authentication**: Clerk (Google Cloud Platform)
 - **AI Processing**: AWS Bedrock (us-east-1)
 - **SSL**: Vercel (Auto-provisioned)
 
